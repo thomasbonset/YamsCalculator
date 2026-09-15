@@ -1,0 +1,48 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yams - Calculateur de score</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Calculateur de score pour le jeu de dés Yams">
+
+  <meta property="og:title" content="Yams - Calculateur de score">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+
+  <div class="app">
+    <h1>Yams — Calculateur de score</h1>
+
+    <div class="controls">
+      <label for="playerCount">Nombre de joueurs</label>
+      <select id="playerCount">
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="scoreTable" aria-label="Feuille de score Yams"></table>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
