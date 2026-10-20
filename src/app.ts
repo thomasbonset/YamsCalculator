@@ -36,6 +36,7 @@ const COMBO_ROWS: ComboRowConfig[] = [
 ];
 
 let players: PlayerData[] = [];
+let currentPlayer = 0;
 
 function createEmptyPlayer(index: number): PlayerData {
   return {
@@ -128,6 +129,7 @@ function buildHeaderRow(count: number): HTMLTableRowElement {
     input.setAttribute('aria-label', `Nom du joueur ${col + 1}`);
     input.addEventListener('input', () => {
       players[col].name = input.value;
+      updateTurnIndicator();
     });
     th.appendChild(input);
     tr.appendChild(th);
@@ -265,6 +267,45 @@ function renderNameInputs(container: HTMLElement, count: number): void {
   }
 }
 
+function updateTurnIndicator(): void {
+  const label = document.getElementById('turnLabel');
+  const player = players[currentPlayer];
+  if (label && player) label.textContent = `Au tour de ${player.name || `Joueur ${currentPlayer + 1}`}`;
+}
+
+function highlightCurrentPlayer(): void {
+  const table = document.getElementById('scoreTable') as HTMLTableElement | null;
+  if (!table) return;
+  // La 1re cellule de chaque ligne est le libellé ; les titres de section couvrent toute la ligne.
+  table.querySelectorAll<HTMLTableRowElement>('tr:not(.section-title)').forEach((tr) => {
+    Array.from(tr.cells)
+      .slice(1)
+      .forEach((cell, col) => {
+        const isCurrent = col === currentPlayer;
+        cell.classList.toggle('is-current', isCurrent);
+        // Seule la colonne du joueur en cours est modifiable, hors cases déjà validées.
+        cell.querySelectorAll('input').forEach((input) => {
+          input.readOnly = !isCurrent || input.dataset.locked === 'true';
+        });
+      });
+  });
+  updateTurnIndicator();
+}
+
+function lockFilledInputs(col: number): void {
+  // Les cases remplies sont figées jusqu'à la fin de la partie.
+  document.querySelectorAll<HTMLInputElement>(`.score-input[id$="-${col}"]`).forEach((input) => {
+    if (input.value.trim() !== '') input.dataset.locked = 'true';
+  });
+}
+
+function nextTurn(): void {
+  if (players.length === 0) return;
+  lockFilledInputs(currentPlayer);
+  currentPlayer = (currentPlayer + 1) % players.length;
+  highlightCurrentPlayer();
+}
+
 function startGame(names: string[]): void {
   players = names.map((name, i) => {
     const player = createEmptyPlayer(i);
@@ -272,6 +313,8 @@ function startGame(names: string[]): void {
     return player;
   });
   renderTable(players.length);
+  currentPlayer = 0;
+  highlightCurrentPlayer();
 }
 
 function initApp(): void {
@@ -308,6 +351,7 @@ function initApp(): void {
 
   cancelButton.addEventListener('click', () => dialog.close());
   newGameButton.addEventListener('click', openSetup);
+  document.getElementById('nextTurnButton')?.addEventListener('click', nextTurn);
 
   openSetup();
 }
