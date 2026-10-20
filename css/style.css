@@ -108,22 +108,98 @@ body {
   margin-bottom: 1rem;
 }
 
-.controls select {
+.controls button,
+.setup-actions button {
+  padding: 0.4rem 0.9rem;
+  font-size: 1rem;
+  border: 1px solid #90a4ae;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.setup-actions button.primary {
+  background: #37474f;
+  border-color: #37474f;
+  color: #fff;
+}
+
+.setup-dialog {
+  width: min(360px, calc(100vw - 2rem));
+  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.setup-dialog::backdrop {
+  background: rgba(38, 50, 56, 0.6);
+}
+
+.setup-dialog h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.setup-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.setup-field select {
   padding: 0.25rem 0.5rem;
   font-size: 1rem;
 }
 
+.setup-names legend {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.setup-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.setup-name input {
+  flex: 1;
+  max-width: 200px;
+  padding: 0.3rem 0.5rem;
+  font-size: 1rem;
+}
+
+.setup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 .table-wrapper {
+  width: fit-content;
+  max-width: 100%;
   overflow-x: auto;
   background: #fff;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
+/* Largeur fixe par joueur : la table s'élargit avec le nombre de joueurs. */
 #scoreTable {
   border-collapse: collapse;
-  width: 100%;
-  min-width: 480px;
+}
+
+#scoreTable td,
+.row-header th:not(:first-child) {
+  width: 7rem;
+  min-width: 7rem;
 }
 
 #scoreTable th,

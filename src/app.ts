@@ -246,19 +246,70 @@ function clampPlayerCount(value: number): number {
   return Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, value));
 }
 
-function initApp(): void {
-  const select = document.getElementById('playerCount') as HTMLSelectElement | null;
-  if (!select) return;
+function renderNameInputs(container: HTMLElement, count: number): void {
+  // Conserve les noms déjà saisis quand on change le nombre de joueurs.
+  const previous = Array.from(container.querySelectorAll<HTMLInputElement>('input')).map((input) => input.value);
+  container.querySelectorAll('.setup-name').forEach((el) => el.remove());
 
-  const initialCount = clampPlayerCount(Number(select.value) || DEFAULT_PLAYERS);
-  players = Array.from({ length: initialCount }, (_, i) => createEmptyPlayer(i));
-  renderTable(initialCount);
+  for (let i = 0; i < count; i++) {
+    const label = document.createElement('label');
+    label.className = 'setup-name';
+    label.textContent = `Joueur ${i + 1}`;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = `Joueur ${i + 1}`;
+    input.maxLength = 20;
+    input.value = previous[i] ?? '';
+    label.appendChild(input);
+    container.appendChild(label);
+  }
+}
+
+function startGame(names: string[]): void {
+  players = names.map((name, i) => {
+    const player = createEmptyPlayer(i);
+    if (name) player.name = name;
+    return player;
+  });
+  renderTable(players.length);
+}
+
+function initApp(): void {
+  const dialog = document.getElementById('setupDialog') as HTMLDialogElement | null;
+  const form = document.getElementById('setupForm') as HTMLFormElement | null;
+  const select = document.getElementById('playerCount') as HTMLSelectElement | null;
+  const namesContainer = document.getElementById('playerNames');
+  const cancelButton = document.getElementById('setupCancel') as HTMLButtonElement | null;
+  const newGameButton = document.getElementById('newGameButton');
+  if (!dialog || !form || !select || !namesContainer || !cancelButton || !newGameButton) return;
+
+  const openSetup = (): void => {
+    // Pas d'annulation possible tant qu'aucune partie n'a commencé.
+    cancelButton.hidden = players.length === 0;
+    renderNameInputs(namesContainer, clampPlayerCount(Number(select.value) || DEFAULT_PLAYERS));
+    dialog.showModal();
+    namesContainer.querySelector('input')?.focus();
+  };
 
   select.addEventListener('change', () => {
-    const count = clampPlayerCount(Number(select.value));
-    players = Array.from({ length: count }, (_, i) => createEmptyPlayer(i));
-    renderTable(count);
+    renderNameInputs(namesContainer, clampPlayerCount(Number(select.value)));
   });
+
+  form.addEventListener('submit', () => {
+    const names = Array.from(namesContainer.querySelectorAll<HTMLInputElement>('input')).map((input) =>
+      input.value.trim()
+    );
+    startGame(names);
+  });
+
+  dialog.addEventListener('cancel', (event) => {
+    if (players.length === 0) event.preventDefault();
+  });
+
+  cancelButton.addEventListener('click', () => dialog.close());
+  newGameButton.addEventListener('click', openSetup);
+
+  openSetup();
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
