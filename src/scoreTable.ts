@@ -2,10 +2,10 @@
  * Construction de la feuille de score en DOM et mise à jour des cellules calculées.
  */
 
-import { COMBO_ROWS, ComboRowConfig, DICE_FACES } from './model';
+import { COMBO_ROWS, ComboRowConfig, DICE_FACES, DICE_PER_ROLL } from './model';
 import { chanceBalance, computeBonus, grandTotal, sumUpper } from './scoring';
 import { game } from './state';
-import { updateTurnIndicator } from './turns';
+import { highlightCurrentPlayer, updateTurnIndicator } from './turns';
 
 function cellId(row: string, col: number): string {
   return `cell-${row}-${col}`;
@@ -31,11 +31,102 @@ function createNumberInput(
   return input;
 }
 
+interface ChoiceOption {
+  label: string;
+  value: number;
+  ariaLabel: string;
+}
+
+/**
+ * Groupe de boutons dont chacun inscrit une valeur dans la case.
+ * Recliquer sur le bouton sélectionné vide la case.
+ */
+function createChoicePicker(
+  id: string,
+  variant: string,
+  options: ChoiceOption[],
+  value: number | null,
+  onChange: (value: number | null) => void
+): HTMLDivElement {
+  const picker = document.createElement('div');
+  picker.id = id;
+  picker.className = `choice-picker choice-picker--${variant}`;
+
+  const buttons = document.createElement('div');
+  buttons.className = 'choice-picker-buttons';
+  const scoreEl = document.createElement('span');
+  scoreEl.className = 'choice-picker-score';
+
+  const refresh = (current: number | null): void => {
+    picker.dataset.value = current === null ? '' : String(current);
+    scoreEl.textContent = current === null ? '' : `= ${current}`;
+    buttons.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
+      const selected = current !== null && Number(button.dataset.value) === current;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+  };
+
+  for (const option of options) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = option.label;
+    button.dataset.value = String(option.value);
+    button.setAttribute('aria-label', option.ariaLabel);
+    button.addEventListener('click', () => {
+      const next = button.classList.contains('is-selected') ? null : option.value;
+      refresh(next);
+      onChange(next);
+    });
+    buttons.appendChild(button);
+  }
+
+  picker.append(buttons, scoreEl);
+  refresh(value);
+  return picker;
+}
+
+/** Boutons 0 à 5 : nombre de dés obtenus sur la face. Le score vaut nombre × face. */
+function createDicePicker(
+  id: string,
+  face: number,
+  value: number | null,
+  onChange: (value: number | null) => void
+): HTMLDivElement {
+  const options = Array.from({ length: DICE_PER_ROLL + 1 }, (_, diceCount) => ({
+    label: String(diceCount),
+    value: diceCount * face,
+    ariaLabel: `${diceCount} dé${diceCount > 1 ? 's' : ''} de ${face}`,
+  }));
+  return createChoicePicker(id, 'dice', options, value, onChange);
+}
+
+/** Commutateur oui/non pour une combinaison à valeur fixe : oui = points, non = 0. */
+function createYesNoToggle(
+  id: string,
+  row: ComboRowConfig,
+  points: number,
+  value: number | null,
+  onChange: (value: number | null) => void
+): HTMLDivElement {
+  const options = [
+    { label: 'Oui', value: points, ariaLabel: `${row.label} : oui` },
+    { label: 'Non', value: 0, ariaLabel: `${row.label} : non` },
+  ];
+  return createChoicePicker(id, 'toggle', options, value, onChange);
+}
+
 function createComputedCell(id: string): HTMLTableCellElement {
   const td = document.createElement('td');
   td.id = id;
   td.className = 'computed-cell';
   return td;
+}
+
+/** Après une saisie : recalcule les totaux et réévalue les cases modifiables du tour. */
+function onScoreChange(col: number): void {
+  updateComputedCells(col);
+  highlightCurrentPlayer();
 }
 
 function updateComputedCells(col: number): void {
@@ -100,11 +191,11 @@ function buildDiceRow(face: number, count: number): HTMLTableRowElement {
   const tr = buildLabelRow(`Total de ${face}`);
   for (let col = 0; col < count; col++) {
     const td = document.createElement('td');
-    const input = createNumberInput(cellId(`dice-${face}`, col), game.players[col].dice[face], (value) => {
+    const picker = createDicePicker(cellId(`dice-${face}`, col), face, game.players[col].dice[face], (value) => {
       game.players[col].dice[face] = value;
-      updateComputedCells(col);
+      onScoreChange(col);
     });
-    td.appendChild(input);
+    td.appendChild(picker);
     tr.appendChild(td);
   }
   return tr;
@@ -114,11 +205,17 @@ function buildComboRow(row: ComboRowConfig, count: number): HTMLTableRowElement 
   const tr = buildLabelRow(row.label);
   for (let col = 0; col < count; col++) {
     const td = document.createElement('td');
-    const input = createNumberInput(cellId(`combo-${row.key}`, col), game.players[col].combos[row.key], (value) => {
+    const id = cellId(`combo-${row.key}`, col);
+    const onChange = (value: number | null): void => {
       game.players[col].combos[row.key] = value;
-      updateComputedCells(col);
-    });
-    td.appendChild(input);
+      onScoreChange(col);
+    };
+    const value = game.players[col].combos[row.key];
+    td.appendChild(
+      row.points === undefined
+        ? createNumberInput(id, value, onChange)
+        : createYesNoToggle(id, row, row.points, value, onChange)
+    );
     tr.appendChild(td);
   }
   return tr;
@@ -130,7 +227,7 @@ function buildChanceRow(label: string, field: 'chance' | 'malchance', count: num
     const td = document.createElement('td');
     const input = createNumberInput(cellId(field, col), game.players[col][field], (value) => {
       game.players[col][field] = value;
-      updateComputedCells(col);
+      onScoreChange(col);
     });
     td.appendChild(input);
     tr.appendChild(td);

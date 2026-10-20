@@ -7,6 +7,8 @@ export type ComboKey = 'brelan' | 'full' | 'petiteSuite' | 'grandeSuite' | 'carr
 export interface ComboRowConfig {
   key: ComboKey;
   label: string;
+  /** Valeur fixe : la ligne se remplit par un commutateur oui/non. */
+  points?: number;
 }
 
 export interface PlayerData {
@@ -18,6 +20,7 @@ export interface PlayerData {
 }
 
 export const DICE_FACES = [1, 2, 3, 4, 5, 6] as const;
+export const DICE_PER_ROLL = 5;
 export const BONUS_THRESHOLD = 63;
 export const BONUS_VALUE = 35;
 export const MIN_PLAYERS = 2;
@@ -26,11 +29,11 @@ export const DEFAULT_PLAYERS = 3;
 
 export const COMBO_ROWS: ComboRowConfig[] = [
   { key: 'brelan', label: 'Brelan (total des triplés)' },
-  { key: 'full', label: 'Full (15 pts)' },
-  { key: 'petiteSuite', label: 'Petite suite (20 pts)' },
-  { key: 'grandeSuite', label: 'Grande suite (25 pts)' },
-  { key: 'carre', label: 'Carré (30 pts)' },
-  { key: 'yams', label: 'Yams (50 pts)' },
+  { key: 'full', label: 'Full (15 pts)', points: 15 },
+  { key: 'petiteSuite', label: 'Petite suite (20 pts)', points: 20 },
+  { key: 'grandeSuite', label: 'Grande suite (25 pts)', points: 25 },
+  { key: 'carre', label: 'Carré (30 pts)', points: 30 },
+  { key: 'yams', label: 'Yams (50 pts)', points: 50 },
 ];
 
 export function createEmptyPlayer(index: number): PlayerData {

@@ -269,6 +269,57 @@ body {
   font-size: 1.05rem;
 }
 
+.choice-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.choice-picker-buttons {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.choice-picker--dice .choice-picker-buttons {
+  grid-template-columns: repeat(3, 1.7rem);
+}
+
+.choice-picker--toggle .choice-picker-buttons {
+  grid-template-columns: repeat(2, 2.6rem);
+}
+
+.choice-picker-buttons button {
+  height: 1.6rem;
+  padding: 0;
+  font-size: 0.85rem;
+  border: 1px solid #90a4ae;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.choice-picker-buttons button.is-selected {
+  background: #37474f;
+  border-color: #37474f;
+  color: #fff;
+}
+
+.choice-picker-buttons button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.choice-picker-buttons button.is-selected:disabled {
+  opacity: 0.8;
+}
+
+.choice-picker-score {
+  min-height: 1.1em;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
 .score-input:read-only {
   background: #f5f5f5;
   border: 1px solid #e0e0e0;
