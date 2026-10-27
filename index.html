@@ -68,6 +68,17 @@
     </form>
   </dialog>
 
+  <dialog id="endDialog" class="end-dialog" aria-labelledby="endTitle">
+    <div class="end-trophy" aria-hidden="true">🏆</div>
+    <h2 id="endTitle">Partie terminée !</h2>
+    <p id="endWinner" class="end-winner"></p>
+    <ol id="endRanking" class="end-ranking" aria-label="Classement"></ol>
+    <div class="end-actions">
+      <button type="button" id="endClose">Voir la feuille</button>
+      <button type="button" id="endRestart" class="primary">Recommencer une partie</button>
+    </div>
+  </dialog>
+
   <script src="js/app.js"></script>
 
 </body>

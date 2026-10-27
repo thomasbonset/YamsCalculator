@@ -199,6 +199,148 @@ body {
   background: rgba(38, 50, 56, 0.6);
 }
 
+.controls button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* Popup de fin de partie */
+.end-dialog {
+  width: min(400px, calc(100vw - 2rem));
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  overflow: visible;
+}
+
+.end-dialog[open] {
+  animation: end-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.end-dialog::backdrop {
+  background: rgba(38, 50, 56, 0.6);
+}
+
+.end-trophy {
+  font-size: 3.5rem;
+  line-height: 1;
+  animation: end-bounce 1.2s ease-in-out infinite;
+}
+
+.end-dialog h2 {
+  margin: 0.5rem 0;
+  font-size: 1.4rem;
+}
+
+.end-winner {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #1565c0;
+}
+
+.end-ranking {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: rank;
+}
+
+.end-ranking li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  counter-increment: rank;
+}
+
+.end-ranking li::before {
+  content: counter(rank) ".";
+  width: 1.5rem;
+  text-align: left;
+}
+
+.end-ranking li span:first-of-type {
+  flex: 1;
+  text-align: left;
+}
+
+.end-ranking li.is-winner {
+  background: #fff9c4;
+  font-weight: bold;
+}
+
+.end-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.end-actions button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #90a4ae;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.end-actions button.primary {
+  background: #37474f;
+  border-color: #37474f;
+  color: #fff;
+  font-weight: bold;
+}
+
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  top: -1rem;
+  width: 0.6rem;
+  height: 0.9rem;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translate(var(--drift), 110vh) rotate(var(--spin));
+  }
+}
+
+@keyframes end-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes end-bounce {
+  50% {
+    transform: translateY(-0.4rem) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .end-dialog[open],
+  .end-trophy {
+    animation: none;
+  }
+}
+
 .setup-dialog h2 {
   margin: 0 0 1rem;
   font-size: 1.25rem;

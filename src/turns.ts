@@ -22,7 +22,8 @@ function isLocked(field: HTMLElement): boolean {
 export function updateTurnIndicator(): void {
   const label = document.getElementById('turnLabel');
   const player = game.players[game.currentPlayer];
-  if (label && player) label.textContent = `Au tour de ${player.name || `Joueur ${game.currentPlayer + 1}`}`;
+  if (label && game.over) label.textContent = 'Partie terminée';
+  else if (label && player) label.textContent = `Au tour de ${player.name || `Joueur ${game.currentPlayer + 1}`}`;
 }
 
 /**
