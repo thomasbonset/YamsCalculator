@@ -137,7 +137,7 @@ body {
 }
 
 .app {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -262,8 +262,8 @@ body {
 
 #scoreTable td,
 .row-header th:not(:first-child) {
-  width: 7rem;
-  min-width: 7rem;
+  width: 13.5rem;
+  min-width: 13.5rem;
 }
 
 #scoreTable th,
@@ -333,11 +333,12 @@ body {
   font-size: 1.05rem;
 }
 
+/* Boutons sur une ligne, score dans une colonne à part à droite. */
 .choice-picker {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.15rem;
+  justify-content: space-between;
+  gap: 0.4rem;
 }
 
 .choice-picker-buttons {
@@ -346,7 +347,7 @@ body {
 }
 
 .choice-picker--dice .choice-picker-buttons {
-  grid-template-columns: repeat(3, 1.7rem);
+  grid-template-columns: repeat(6, 1.5rem);
 }
 
 .choice-picker--toggle .choice-picker-buttons {
@@ -379,7 +380,14 @@ body {
 }
 
 .choice-picker-score {
-  min-height: 1.1em;
+  flex: 0 0 2.6rem;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: 0.4rem;
+  border-left: 1px solid #ddd;
+  white-space: nowrap;
   font-size: 0.85rem;
   font-weight: bold;
 }
