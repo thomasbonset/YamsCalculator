@@ -55,6 +55,10 @@ export function highlightCurrentPlayer(): void {
         });
       });
   });
+
+  // On ne valide un tour qu'après avoir rempli une case, et plus du tout une fois la partie finie.
+  const nextTurnButton = document.getElementById('nextTurnButton') as HTMLButtonElement | null;
+  if (nextTurnButton) nextTurnButton.disabled = game.over || filledThisTurn === undefined;
   updateTurnIndicator();
 }
 

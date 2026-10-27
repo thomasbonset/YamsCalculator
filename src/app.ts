@@ -11,7 +11,7 @@ import { createEmptyPlayer } from './model';
 import { renderTable } from './scoreTable';
 import { initSetupDialog } from './setupDialog';
 import { game } from './state';
-import { highlightCurrentPlayer, nextTurn, updateTurnIndicator } from './turns';
+import { highlightCurrentPlayer, nextTurn } from './turns';
 
 function startGame(names: string[]): void {
   game.players = names.map((name, i) => {
@@ -22,14 +22,8 @@ function startGame(names: string[]): void {
   renderTable(game.players.length);
   game.currentPlayer = 0;
   game.over = false;
-  setNextTurnEnabled(true);
   highlightCurrentPlayer();
   showApp();
-}
-
-function setNextTurnEnabled(enabled: boolean): void {
-  const button = document.getElementById('nextTurnButton') as HTMLButtonElement | null;
-  if (button) button.disabled = !enabled;
 }
 
 /** Valide le tour ; si plus aucune case n'est à remplir, proclame le gagnant. */
@@ -37,8 +31,7 @@ function onNextTurn(): void {
   nextTurn();
   if (!isGameOver()) return;
   game.over = true;
-  setNextTurnEnabled(false);
-  updateTurnIndicator();
+  highlightCurrentPlayer();
   showEndDialog();
 }
 
