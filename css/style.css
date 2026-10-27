@@ -91,6 +91,51 @@ body {
   padding: 1.5rem;
 }
 
+.welcome {
+  min-height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.welcome-title {
+  margin: 0;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  color: #37474f;
+}
+
+.welcome-subtitle {
+  margin: 0 0 1.5rem;
+  font-size: 1.15rem;
+  color: #607d8b;
+}
+
+.welcome-start {
+  padding: 1.1rem 2.5rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  background: #37474f;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(55, 71, 79, 0.35);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.welcome-start:hover {
+  background: #263238;
+  transform: translateY(-2px);
+}
+
+.welcome-start:focus-visible {
+  outline: 3px solid #90caf9;
+  outline-offset: 3px;
+}
+
 .app {
   max-width: 960px;
   margin: 0 auto;

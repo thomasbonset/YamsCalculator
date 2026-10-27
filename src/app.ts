@@ -3,7 +3,7 @@
  * SPA sans framework : construit la feuille de score en DOM et recalcule
  * les sous-totaux / total à chaque saisie.
  *
- * Point d'entrée : relie la popup de configuration, la feuille de score et les tours.
+ * Point d'entrée : relie la page d'accueil, la popup de configuration, la feuille de score et les tours.
  */
 
 import { createEmptyPlayer } from './model';
@@ -21,12 +21,20 @@ function startGame(names: string[]): void {
   renderTable(game.players.length);
   game.currentPlayer = 0;
   highlightCurrentPlayer();
+  showApp();
+}
+
+/** Quitte la page d'accueil pour afficher la feuille de score. */
+function showApp(): void {
+  document.getElementById('welcome')?.setAttribute('hidden', '');
+  document.getElementById('app')?.removeAttribute('hidden');
 }
 
 function initApp(): void {
   const openSetup = initSetupDialog(startGame);
   if (!openSetup) return;
 
+  document.getElementById('welcomeStartButton')?.addEventListener('click', openSetup);
   document.getElementById('newGameButton')?.addEventListener('click', openSetup);
   document.getElementById('nextTurnButton')?.addEventListener('click', nextTurn);
 }

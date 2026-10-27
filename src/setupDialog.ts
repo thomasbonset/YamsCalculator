@@ -3,7 +3,6 @@
  */
 
 import { DEFAULT_PLAYERS, MAX_PLAYERS, MIN_PLAYERS } from './model';
-import { game } from './state';
 
 function clampPlayerCount(value: number): number {
   return Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, value));
@@ -30,7 +29,7 @@ function renderNameInputs(container: HTMLElement, count: number): void {
 
 
 /**
- * Branche la popup et l'ouvre immédiatement. Renvoie la fonction qui la rouvre.
+ * Branche la popup. Renvoie la fonction qui l'ouvre.
  */
 export function initSetupDialog(onStart: (names: string[]) => void): (() => void) | null {
   const dialog = document.getElementById('setupDialog') as HTMLDialogElement | null;
@@ -41,8 +40,6 @@ export function initSetupDialog(onStart: (names: string[]) => void): (() => void
   if (!dialog || !form || !select || !namesContainer || !cancelButton) return null;
 
   const openSetup = (): void => {
-    // Pas d'annulation possible tant qu'aucune partie n'a commencé.
-    cancelButton.hidden = game.players.length === 0;
     renderNameInputs(namesContainer, clampPlayerCount(Number(select.value) || DEFAULT_PLAYERS));
     dialog.showModal();
     namesContainer.querySelector('input')?.focus();
@@ -59,12 +56,7 @@ export function initSetupDialog(onStart: (names: string[]) => void): (() => void
     onStart(names);
   });
 
-  dialog.addEventListener('cancel', (event) => {
-    if (game.players.length === 0) event.preventDefault();
-  });
-
   cancelButton.addEventListener('click', () => dialog.close());
 
-  openSetup();
   return openSetup;
 }
